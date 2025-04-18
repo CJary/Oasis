@@ -41,6 +41,12 @@ Substitute(const Expression& expr,
         return std::make_unique<Multiply<Expression>>(*L, *R);
     }
 
+    if (auto e = dynamic_cast<const Exponent<Expression>*>(&expr)) {
+        auto base = Substitute(e->GetMostSigOp(),  target, replacement);
+        auto pow  = Substitute(e->GetLeastSigOp(), target, replacement);
+        return std::make_unique<Exponent<Expression>>(*base, *pow);
+    }
+
     return expr.Copy();
 }
 
