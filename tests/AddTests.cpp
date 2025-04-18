@@ -10,8 +10,32 @@
 #include "Oasis/Real.hpp"
 #include "Oasis/RecursiveCast.hpp"
 #include "Oasis/Variable.hpp"
+#include "Oasis/Substitute.hpp"
 
+#include <catch2/catch_approx.hpp>
 #include <functional>
+
+TEST_CASE("Substitute x→4 in 2x+3x", "[Substitute]") {
+    using namespace Oasis;
+
+    Add<Expression> expr {
+        Multiply<Real,Variable>{ Real{2.0}, Variable{"x"} },
+        Multiply<Real,Variable>{ Real{3.0}, Variable{"x"} }
+    };
+
+    auto subbed = Substitute(expr, Variable{"x"}, Real{4.0});
+
+    Add<Expression> expectedTree {
+        Multiply<Expression>{ Real{2.0}, Real{4.0} },
+        Multiply<Expression>{ Real{3.0}, Real{4.0} }
+    };
+    REQUIRE(expectedTree.Equals(*subbed));
+
+    auto simplified = subbed->Simplify();
+    REQUIRE(simplified->Is<Real>());
+    auto& r = dynamic_cast<Real&>(*simplified);
+    REQUIRE(r.GetValue() == Catch::Approx(20.0));
+}
 
 TEST_CASE("Addition", "[Add]")
 {

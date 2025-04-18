@@ -47,6 +47,17 @@ Substitute(const Expression& expr,
         return std::make_unique<Exponent<Expression>>(*base, *pow);
     }
 
+    if (auto mrv = dynamic_cast<const Multiply<Real,Variable>*>(&expr); mrv) {
+        auto L = Substitute(mrv->GetMostSigOp(),  target, replacement);
+        auto R = Substitute(mrv->GetLeastSigOp(), target, replacement);
+
+        // both *L and *R must now be Real
+        const auto& lreal = dynamic_cast<const Real&>(*L);
+        const auto& rreal = dynamic_cast<const Real&>(*R);
+
+        return std::make_unique<Multiply<Real,Real>>(lreal, rreal);
+    }
+
     return expr.Copy();
 }
 
