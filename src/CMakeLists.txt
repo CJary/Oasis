@@ -28,7 +28,8 @@ set(Oasis_SOURCES
     # Summation.cpp
     Undefined.cpp
     Variable.cpp
-        PartialFraction.cpp)
+        PartialFraction.cpp
+        Polynomial.cpp)
 
 # Adds a library target called "Oasis" to be built from source files.
 add_library(Oasis ${Oasis_SOURCES})
